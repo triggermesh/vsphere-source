@@ -19,19 +19,13 @@ package v1alpha1
 import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	runtime "k8s.io/apimachinery/pkg/runtime"
+	"knative.dev/pkg/apis/duck"
 	duckv1alpha1 "knative.dev/pkg/apis/duck/v1alpha1"
 )
 
-// VSphereSourceSpec defines the desired state of VsphereSource
-type VSphereSourceSpec struct {
-	VSphereURL         string                   `json:"vsphereUrl"`
-	VSphereCredsSecret corev1.SecretKeySelector `json:"vsphereCredsSecret"`
-	Sink               *corev1.ObjectReference  `json:"sink,omitempty"`
-	ServiceAccountName string                   `json:"serviceAccountName,omitempty"`
-}
-
 const (
-	VSphereSourceEventType                                              = "vmware.vsphere.event"
+	VSphereSourceEventType                                              = "vmware.vsphere.message"
 	VSphereSourceConditionReady                                         = duckv1alpha1.ConditionReady
 	VSphereSourceConditionSinkProvided       duckv1alpha1.ConditionType = "SinkProvided"
 	VSphereSourceConditionDeployed           duckv1alpha1.ConditionType = "Deployed"
@@ -62,6 +56,20 @@ type VSphereSource struct {
 
 	Spec   VSphereSourceSpec   `json:"spec,omitempty"`
 	Status VSphereSourceStatus `json:"status,omitempty"`
+}
+
+// Check that VSphereSource can be validated and can be defaulted.
+var _ runtime.Object = (*VSphereSource)(nil)
+
+// Check that VSphereSource implements the Conditions duck type.
+var _ = duck.VerifyType(&VSphereSource{}, &duckv1alpha1.Conditions{})
+
+// VSphereSourceSpec defines the desired state of VsphereSource
+type VSphereSourceSpec struct {
+	VSphereURL         string                   `json:"vsphereUrl"`
+	VSphereCredsSecret corev1.SecretKeySelector `json:"vsphereCredsSecret"`
+	Sink               *corev1.ObjectReference  `json:"sink,omitempty"`
+	ServiceAccountName string                   `json:"serviceAccountName,omitempty"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

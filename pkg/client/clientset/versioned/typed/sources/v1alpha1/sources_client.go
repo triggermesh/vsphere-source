@@ -21,7 +21,6 @@ package v1alpha1
 import (
 	v1alpha1 "github.com/triggermesh/vsphere-source/pkg/apis/sources/v1alpha1"
 	"github.com/triggermesh/vsphere-source/pkg/client/clientset/versioned/scheme"
-	serializer "k8s.io/apimachinery/pkg/runtime/serializer"
 	rest "k8s.io/client-go/rest"
 )
 
@@ -30,7 +29,7 @@ type SourcesV1alpha1Interface interface {
 	VSphereSourcesGetter
 }
 
-// SourcesV1alpha1Client is used to interact with features provided by the sources.triggermesh.dev group.
+// SourcesV1alpha1Client is used to interact with features provided by the sources.eventing.triggermesh.dev group.
 type SourcesV1alpha1Client struct {
 	restClient rest.Interface
 }
@@ -71,7 +70,7 @@ func setConfigDefaults(config *rest.Config) error {
 	gv := v1alpha1.SchemeGroupVersion
 	config.GroupVersion = &gv
 	config.APIPath = "/apis"
-	config.NegotiatedSerializer = serializer.DirectCodecFactory{CodecFactory: scheme.Codecs}
+	config.NegotiatedSerializer = scheme.Codecs.WithoutConversion()
 
 	if config.UserAgent == "" {
 		config.UserAgent = rest.DefaultKubernetesUserAgent()

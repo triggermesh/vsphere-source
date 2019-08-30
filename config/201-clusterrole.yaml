@@ -78,6 +78,7 @@ rules:
   - eventing.knative.dev
   resources:
   - channels
+  - eventtypes
   verbs:
   - get
   - list

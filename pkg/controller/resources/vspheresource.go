@@ -25,7 +25,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// ReceiveAdapterArgs are the arguments needed to create an AWS SQS
+// ReceiveAdapterArgs are the arguments needed to create an VMware vSphere
 // Source Receive Adapter. Every field is required.
 type ReceiveAdapterArgs struct {
 	Image   string

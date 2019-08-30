@@ -21,7 +21,7 @@ limitations under the License.
 // +k8s:deepcopy-gen=package,register
 // +k8s:conversion-gen=github.com/triggermesh/vsphere-source/pkg/apis/sources
 // +k8s:defaulter-gen=TypeMeta
-// +groupName=sources.triggermesh.dev
+// +groupName=sources.eventing.triggermesh.dev
 package v1alpha1
 
 import (
@@ -31,7 +31,7 @@ import (
 
 var (
 	// SchemeGroupVersion is group version used to register these objects
-	SchemeGroupVersion = schema.GroupVersion{Group: "sources.triggermesh.dev", Version: "v1alpha1"}
+	SchemeGroupVersion = schema.GroupVersion{Group: "sources.eventing.triggermesh.dev", Version: "v1alpha1"}
 
 	// SchemeBuilder is used to add go types to the GroupVersionKind scheme
 	SchemeBuilder = &scheme.Builder{GroupVersion: SchemeGroupVersion}

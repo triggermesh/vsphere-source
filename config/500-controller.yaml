@@ -30,10 +30,10 @@ spec:
         control-plane: vsphere-controller-manager
     spec:
       containers:
-      - image: github.com/triggermesh/vsphere-sources/cmd/controller
+      - image: github.com/triggermesh/vsphere-source/cmd/controller
         env:
         - name: VSPHERE_RA_IMAGE
-          value: github.com/triggermesh/vsphere-sources/cmd/receive_adapter
+          value: github.com/triggermesh/vsphere-source/cmd/receive_adapter
         name: manager
         resources:
           limits:

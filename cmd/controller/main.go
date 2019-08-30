@@ -40,35 +40,35 @@ func main() {
 	logger = logger.With(zap.String(logkey.ControllerType, "vsphere-controller"))
 
 	// Get a config to talk to the apiserver
-	log.Info("setting up client for manager")
+	log.Println("setting up client for manager")
 	cfg, err := config.GetConfig()
 	if err != nil {
 		log.Fatal("Unable to set up client config:", err)
 	}
 
 	// Create a new Cmd to provide shared dependencies and start components
-	log.Info("setting up manager")
-	mgr, err := manager.New(cfg, manager.Options{MetricsBindAddress: metricsAddr})
+	log.Println("setting up manager")
+	mgr, err := manager.New(cfg, manager.Options{})
 	if err != nil {
 		log.Fatal("unable to set up overall controller manager:", err)
 	}
 
-	log.Info("Registering Components.")
+	log.Println("Registering Components.")
 
 	// Setup Scheme for all resources
-	log.Info("setting up scheme")
+	log.Println("setting up scheme")
 	if err := apis.AddToScheme(mgr.GetScheme()); err != nil {
 		log.Fatal("unable add APIs to scheme", err)
 	}
 
 	// Setup all Controllers
-	log.Info("Setting up controller")
+	log.Println("Setting up controller")
 	if err := controller.Add(mgr, logger.Sugar()); err != nil {
 		log.Fatal("unable to register controllers to the manager:", err)
 	}
 
 	// Start the Cmd
-	log.Info("Starting the Cmd.")
+	log.Println("Starting the Cmd.")
 	if err := mgr.Start(signals.SetupSignalHandler()); err != nil {
 		log.Fatal("unable to run the manager:", err)
 	}

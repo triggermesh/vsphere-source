@@ -52,7 +52,7 @@ func (f *genericInformer) Lister() cache.GenericLister {
 // TODO extend this to unknown resources with a client pool
 func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource) (GenericInformer, error) {
 	switch resource {
-	// Group=sources.triggermesh.dev, Version=v1alpha1
+	// Group=sources.eventing.triggermesh.dev, Version=v1alpha1
 	case v1alpha1.SchemeGroupVersion.WithResource("vspheresources"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Sources().V1alpha1().VSphereSources().Informer()}, nil
 

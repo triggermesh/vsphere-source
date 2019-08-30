@@ -34,9 +34,9 @@ type FakeVSphereSources struct {
 	ns   string
 }
 
-var vspheresourcesResource = schema.GroupVersionResource{Group: "sources.triggermesh.dev", Version: "v1alpha1", Resource: "vspheresources"}
+var vspheresourcesResource = schema.GroupVersionResource{Group: "sources.eventing.triggermesh.dev", Version: "v1alpha1", Resource: "vspheresources"}
 
-var vspheresourcesKind = schema.GroupVersionKind{Group: "sources.triggermesh.dev", Version: "v1alpha1", Kind: "VSphereSource"}
+var vspheresourcesKind = schema.GroupVersionKind{Group: "sources.eventing.triggermesh.dev", Version: "v1alpha1", Kind: "VSphereSource"}
 
 // Get takes name of the vSphereSource, and returns the corresponding vSphereSource object, and an error if there is any.
 func (c *FakeVSphereSources) Get(name string, options v1.GetOptions) (result *v1alpha1.VSphereSource, err error) {
