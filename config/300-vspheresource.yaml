@@ -1,0 +1,92 @@
+# Copyright 2019 Triggermesh, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: vspheresources.sources.eventing.triggermesh.dev
+spec:
+  group: sources.eventing.triggermesh.dev
+  names:
+    categories:
+    - all
+    - knative
+    - eventing
+    - sources
+    kind: vspheresource
+    plural: vspheresources
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      properties:
+        registry:
+          type: object
+          description: "Internal information, users should not set this property"
+          properties:
+            eventTypes:
+              type: object
+              description: "Event types that VMware vSphere can produce"
+              properties:
+                message:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      pattern: "vSphere.message"
+                    # TODO: set the schema pattern.
+                    schema:
+                      type: string
+        spec:
+          properties:
+            vSphereCredsSecret:
+              type: object
+            apiUrl:
+              type: string
+            serviceAccountName:
+              type: string
+            sink:
+              type: object
+          required:
+          - apiUrl
+          type: object
+        status:
+          properties:
+            conditions:
+              items:
+                properties:
+                  lastTransitionTime:
+                    # we use a string in the stored object but a wrapper object
+                    # at runtime.
+                    type: string
+                  message:
+                    type: string
+                  reason:
+                    type: string
+                  severity:
+                    type: string
+                  status:
+                    type: string
+                  type:
+                    type: string
+                required:
+                - type
+                - status
+                type: object
+              type: array
+            sinkUri:
+              type: string
+          type: object
+  version: v1alpha1

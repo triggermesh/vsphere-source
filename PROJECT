@@ -1,0 +1,3 @@
+version: "1"
+domain: triggermesh.dev
+repo: github.com/triggermesh/vsphere-source
