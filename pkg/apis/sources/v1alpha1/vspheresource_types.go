@@ -67,6 +67,7 @@ var _ = duck.VerifyType(&VSphereSource{}, &duckv1alpha1.Conditions{})
 // VSphereSourceSpec defines the desired state of VsphereSource
 type VSphereSourceSpec struct {
 	VSphereURL         string                   `json:"vsphereUrl"`
+	VSphereUser        string                   `json:"vsphereUser"`
 	VSphereCredsSecret corev1.SecretKeySelector `json:"vsphereCredsSecret"`
 	Sink               *corev1.ObjectReference  `json:"sink,omitempty"`
 	ServiceAccountName string                   `json:"serviceAccountName,omitempty"`

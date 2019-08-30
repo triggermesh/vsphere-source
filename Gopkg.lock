@@ -625,11 +625,13 @@
   version = "v1.0.3"
 
 [[projects]]
-  digest = "1:a32e66ef8c5c69d57942abaf76ce458741979d93f7256bbf26909ab75c0b0256"
+  digest = "1:a0d80813c5bafcf12e043ebcb9ef69f13a98a5f2a406a5c04ea161580afce7ae"
   name = "github.com/vmware/govmomi"
   packages = [
     ".",
     "event",
+    "find",
+    "list",
     "nfc",
     "object",
     "property",
@@ -1429,6 +1431,7 @@
     "github.com/onsi/gomega",
     "github.com/vmware/govmomi",
     "github.com/vmware/govmomi/event",
+    "github.com/vmware/govmomi/find",
     "github.com/vmware/govmomi/vim25/soap",
     "github.com/vmware/govmomi/vim25/types",
     "go.uber.org/zap",
@@ -1462,6 +1465,7 @@
     "knative.dev/eventing-contrib/pkg/kncloudevents",
     "knative.dev/eventing-contrib/pkg/reconciler/eventtype",
     "knative.dev/eventing/pkg/apis/eventing/v1alpha1",
+    "knative.dev/pkg/apis/duck",
     "knative.dev/pkg/apis/duck/v1alpha1",
     "knative.dev/pkg/logging",
     "knative.dev/pkg/logging/logkey",

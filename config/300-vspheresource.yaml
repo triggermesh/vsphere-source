@@ -55,12 +55,16 @@ spec:
               type: object
             vSphereUrl:
               type: string
+            vSphereUser:
+              type: string
             serviceAccountName:
               type: string
             sink:
               type: object
           required:
-          - apiUrl
+          - vsphereUrl
+          - vsphereUser
+          - vsphereCredsSecret
           type: object
         status:
           properties:

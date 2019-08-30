@@ -79,6 +79,7 @@ rules:
   resources:
   - channels
   - eventtypes
+  - brokers
   verbs:
   - get
   - list

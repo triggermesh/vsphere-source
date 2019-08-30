@@ -16,7 +16,9 @@ package adapter
 
 import (
 	"context"
+	"fmt"
 	"net/url"
+	"reflect"
 	"strconv"
 	"time"
 
@@ -27,6 +29,7 @@ import (
 	"github.com/triggermesh/vsphere-source/pkg/apis/sources/v1alpha1"
 	"github.com/vmware/govmomi"
 	"github.com/vmware/govmomi/event"
+	"github.com/vmware/govmomi/find"
 	"github.com/vmware/govmomi/vim25/soap"
 	"github.com/vmware/govmomi/vim25/types"
 	"go.uber.org/zap"
@@ -88,14 +91,11 @@ func (a *Adapter) pollLoop(ctx context.Context, client *govmomi.Client, stopCh <
 			return nil
 		default:
 		}
-		events, err := poll(ctx, client, a.SinkURI, 10)
+		err := a.poll(ctx, client, 10)
 		if err != nil {
 			logger.Warn("Failed to poll events from vSphere", zap.Error(err))
 			time.Sleep(a.OnFailedPollWaitSecs * time.Second)
 			continue
-		}
-		for _, baseEvent := range events {
-			a.receiveMessage(ctx, baseEvent.GetEvent())
 		}
 	}
 }
@@ -141,8 +141,26 @@ func vSphereClient(ctx context.Context, vSphereURL, user, password string) (*gov
 	return govmomi.NewClient(ctx, u, true)
 }
 
-// poll reads messages from the queue in batches of a given maximum size.
-func poll(ctx context.Context, c *govmomi.Client, url string, maxBatchSize int32) ([]types.BaseEvent, error) {
-	collector := event.NewHistoryCollector(c.Client, types.ManagedObjectReference{})
-	return collector.ReadNextEvents(ctx, maxBatchSize)
+func (a *Adapter) handleEvent(ref types.ManagedObjectReference, events []types.BaseEvent) (err error) {
+	for _, event := range events {
+		eventType := reflect.TypeOf(event).String()
+		fmt.Printf("%s: %s\n", eventType, event.GetEvent().FullFormattedMessage)
+		a.receiveMessage(context.TODO(), event.GetEvent())
+	}
+
+	return nil
+}
+
+func (a *Adapter) poll(ctx context.Context, c *govmomi.Client, maxBatch int32) error {
+	// Selecting default datacenter
+	finder := find.NewFinder(c.Client, true)
+	dc, err := finder.DefaultDatacenter(ctx)
+	if err != nil {
+		return err
+	}
+	refs := []types.ManagedObjectReference{dc.Reference()}
+
+	// Setting up the event manager
+	eventManager := event.NewManager(c.Client)
+	return eventManager.Events(ctx, refs, maxBatch, true, false, a.handleEvent)
 }

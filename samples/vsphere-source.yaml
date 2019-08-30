@@ -1,0 +1,14 @@
+apiVersion: sources.eventing.triggermesh.dev/v1alpha1
+kind: VSphereSource
+metadata:
+  name: vsphere-sample-source
+spec:
+  vsphereCredsSecret:
+    name: vsphere-credentials
+    key: password
+  vsphereUser: root
+  vsphereUrl: ns3135023.ip-51-77-66.eu
+  sink:
+    apiVersion: eventing.knative.dev/v1alpha1
+    kind: Broker
+    name: default

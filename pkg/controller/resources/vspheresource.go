@@ -64,10 +64,8 @@ func MakeReceiveAdapter(args *ReceiveAdapterArgs) *v1.Deployment {
 							Image: args.Image,
 							Env: []corev1.EnvVar{
 								{
-									Name: "VSPHERE_USER",
-									ValueFrom: &corev1.EnvVarSource{
-										SecretKeyRef: &args.Source.Spec.VSphereCredsSecret,
-									},
+									Name:  "VSPHERE_USER",
+									Value: args.Source.Spec.VSphereUser,
 								},
 								{
 									Name: "VSPHERE_PASSWORD",
