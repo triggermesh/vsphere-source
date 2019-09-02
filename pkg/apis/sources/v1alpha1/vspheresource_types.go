@@ -91,6 +91,7 @@ func (s *VSphereSourceStatus) InitializeConditions() {
 	condSet.Manage(s).InitializeConditions()
 }
 
+// GetCondition returns condition value of requested condition type
 func (s *VSphereSourceStatus) GetCondition(t duckv1alpha1.ConditionType) *duckv1alpha1.Condition {
 	return condSet.Manage(s).GetCondition(t)
 }

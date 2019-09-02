@@ -16,9 +16,7 @@ package adapter
 
 import (
 	"context"
-	"fmt"
 	"net/url"
-	"reflect"
 	"strconv"
 	"time"
 
@@ -36,12 +34,16 @@ import (
 	"knative.dev/eventing-contrib/pkg/kncloudevents"
 )
 
+// Adapter structure provides required data to message receiver service
 type Adapter struct {
 	// SinkURI is the URI messages will be forwarded on to.
 	SinkURI string
 
-	VSphereURL      string
-	VSphereUser     string
+	// VSphereURL is either domain or IP of vCenter or ESXi host
+	VSphereURL string
+	// VSphereUser is user name which will be used by receiver adapter to read events
+	VSphereUser string
+	// VSpherePassword is a password to connect to vCenter or ESXi
 	VSpherePassword string
 
 	// OnFailedPollWaitSecs determines the interval to wait after a
@@ -63,6 +65,7 @@ func (a *Adapter) initClient() error {
 	return nil
 }
 
+// Start creates new vSphere client, waits for the events and forwards them to SinkURI
 func (a *Adapter) Start(ctx context.Context, stopCh <-chan struct{}) error {
 	logger := logging.FromContext(ctx)
 
@@ -143,11 +146,10 @@ func vSphereClient(ctx context.Context, vSphereURL, user, password string) (*gov
 
 func (a *Adapter) handleEvent(ref types.ManagedObjectReference, events []types.BaseEvent) (err error) {
 	for _, event := range events {
-		eventType := reflect.TypeOf(event).String()
-		fmt.Printf("%s: %s\n", eventType, event.GetEvent().FullFormattedMessage)
+		// eventType := reflect.TypeOf(event).String()
+		// fmt.Printf("%s: %s\n", eventType, event.GetEvent().FullFormattedMessage)
 		a.receiveMessage(context.TODO(), event.GetEvent())
 	}
-
 	return nil
 }
 

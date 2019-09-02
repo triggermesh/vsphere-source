@@ -6,9 +6,9 @@ spec:
   vsphereCredsSecret:
     name: vsphere-credentials
     key: password
-  vsphereUser: root
-  vsphereUrl: ns3135023.ip-51-77-66.eu
+  vsphereUser: <vSphere username>
+  vsphereUrl: <vSphere domain or IP>
   sink:
-    apiVersion: eventing.knative.dev/v1alpha1
-    kind: Broker
-    name: default
+    apiVersion: serving.knative.dev/v1alpha1
+    kind: Service
+    name: event-display
