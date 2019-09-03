@@ -30,7 +30,7 @@ func TestStorageVsphereSource(t *testing.T) {
 		Name:      "foo",
 		Namespace: "default",
 	}
-	created := &VsphereSource{
+	created := &VSphereSource{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "foo",
 			Namespace: "default",
@@ -38,7 +38,7 @@ func TestStorageVsphereSource(t *testing.T) {
 	g := gomega.NewGomegaWithT(t)
 
 	// Test Create
-	fetched := &VsphereSource{}
+	fetched := &VSphereSource{}
 	g.Expect(c.Create(context.TODO(), created)).To(gomega.Succeed())
 
 	g.Expect(c.Get(context.TODO(), key, fetched)).To(gomega.Succeed())

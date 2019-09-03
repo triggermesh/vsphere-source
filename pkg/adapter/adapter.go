@@ -68,34 +68,35 @@ func (a *Adapter) initClient() error {
 // Start creates new vSphere client, waits for the events and forwards them to SinkURI
 func (a *Adapter) Start(ctx context.Context, stopCh <-chan struct{}) error {
 	logger := logging.FromContext(ctx)
-
 	logger.Info("Starting with config: ", zap.Any("adapter", a))
+
+	childCtx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	select {
+	case <-stopCh:
+		return nil
+	default:
+	}
 
 	if err := a.initClient(); err != nil {
 		logger.Error("Failed to create cloudevent client", zap.Error(err))
 		return err
 	}
 
-	client, err := vSphereClient(ctx, a.VSphereURL, a.VSphereUser, a.VSpherePassword)
+	client, err := vSphereClient(childCtx, a.VSphereURL, a.VSphereUser, a.VSpherePassword)
 	if err != nil {
 		logger.Error("Failed to create vSphere client", zap.Error(err))
 		return err
 	}
 
-	return a.pollLoop(ctx, client, stopCh)
+	return a.pollLoop(childCtx, client)
 }
 
-func (a *Adapter) pollLoop(ctx context.Context, client *govmomi.Client, stopCh <-chan struct{}) error {
+func (a *Adapter) pollLoop(ctx context.Context, client *govmomi.Client) error {
 	logger := logging.FromContext(ctx)
 	for {
-		select {
-		case <-stopCh:
-			logger.Info("Exiting")
-			return nil
-		default:
-		}
-		err := a.poll(ctx, client, 10)
-		if err != nil {
+		if err := a.poll(ctx, client, 10); err != nil {
 			logger.Warn("Failed to poll events from vSphere", zap.Error(err))
 			time.Sleep(a.OnFailedPollWaitSecs * time.Second)
 			continue
@@ -103,15 +104,16 @@ func (a *Adapter) pollLoop(ctx context.Context, client *govmomi.Client, stopCh <
 	}
 }
 
-func (a *Adapter) receiveMessage(ctx context.Context, event *types.Event) {
+func (a *Adapter) receiveMessage(ctx context.Context, event *types.Event, ack func()) {
 	logger := logging.FromContext(ctx).With(zap.Any("eventID", event.Key)).With(zap.Any("sink", a.SinkURI))
 	logger.Debugw("Received message from vSphere:", zap.Any("message", event))
 
 	err := a.postMessage(ctx, logger, event)
 	if err != nil {
-		logger.Infof("Event delivery failed: %s", err)
+		logger.Errorf("Event delivery failed: %s", err)
 	} else {
 		logger.Debug("Message successfully posted to Sink")
+		ack()
 	}
 }
 
@@ -127,7 +129,7 @@ func (a *Adapter) postMessage(ctx context.Context, logger *zap.SugaredLogger, ev
 		Data: event.FullFormattedMessage,
 	}
 
-	_, err := a.client.Send(context.TODO(), e)
+	_, err := a.client.Send(ctx, e)
 	return err
 }
 
@@ -148,7 +150,7 @@ func (a *Adapter) handleEvent(ref types.ManagedObjectReference, events []types.B
 	for _, event := range events {
 		// eventType := reflect.TypeOf(event).String()
 		// fmt.Printf("%s: %s\n", eventType, event.GetEvent().FullFormattedMessage)
-		a.receiveMessage(context.TODO(), event.GetEvent())
+		a.receiveMessage(context.TODO(), event.GetEvent(), func() {})
 	}
 	return nil
 }
